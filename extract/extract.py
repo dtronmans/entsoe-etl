@@ -5,12 +5,7 @@ from datetime import datetime, timedelta, timezone
 from api.api_caller import Caller
 
 
-def extract_actual_load(bidding_zone='10YFR-RTE------C', target_date=None, cache_file="cached_actual_load.pkl"):
-    # if os.path.exists(cache_file):
-    #     with open(cache_file, "rb") as f:
-    #         print("Loading from cache...")
-    #         return pickle.load(f)
-
+def extract_actual_load_five_days_prior(bidding_zone='10YFR-RTE------C', target_date=None):
     caller = Caller()
 
     print("Fetching from ENTSO-E API...")
@@ -23,7 +18,7 @@ def extract_actual_load(bidding_zone='10YFR-RTE------C', target_date=None, cache
 
     for i in range(5):
         date = start_date - timedelta(days=i)
-        local_tz = ZoneInfo("Europe/Paris")  # or make this dynamic based on bidding zone
+        local_tz = ZoneInfo("Europe/Paris")
 
         local_start = datetime.combine(date, datetime.min.time(), tzinfo=local_tz)
         local_end = local_start + timedelta(days=1)
@@ -33,12 +28,5 @@ def extract_actual_load(bidding_zone='10YFR-RTE------C', target_date=None, cache
 
         day_data = caller.get_actual_load(start, end, bidding_zone)
         data_per_day.append((date, day_data))
-
-    if data_per_day:
-    #     with open(cache_file, "wb") as f:
-    #         pickle.dump(data_per_day, f)
-        print(f"✅ Saved {len(data_per_day)} days to cache.")
-    else:
-        print("❗ No data fetched. Check API key or parameters.")
 
     return data_per_day
