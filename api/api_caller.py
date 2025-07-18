@@ -58,3 +58,18 @@ class Caller:
             'periodStart': format_entsoe_datetime(start),
             'periodEnd': format_entsoe_datetime(end),
         }
+
+    @entsoe_api_call
+    def get_forecast_load(self, start, end, bidding_zone=None):
+        # equivalent to https://transparency.entsoe.eu/load-domain/r2/totalLoadR2/show?name=&defaultValue=false&viewType=TABLE&areaType=BZN&atch=false&dateTime.dateTime=03.07.2025+00:00|CET|DAY&biddingZone.values=CTY|10YNL----------L!BZN|10YNL----------L&dateTime.timezone=CET_CEST&dateTime.timezone_input=CET+(UTC+1)+/+CEST+(UTC+2)
+        if bidding_zone is None:
+            bidding_zone = self.defaults["bidding_zone"]
+
+        return {
+            'securityToken': self.api_key,
+            'documentType': 'A65',
+            'processType': 'A01',
+            'outBiddingZone_Domain': bidding_zone,
+            'periodStart': format_entsoe_datetime(start),
+            'periodEnd': format_entsoe_datetime(end),
+        }
