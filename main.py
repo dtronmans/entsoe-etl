@@ -4,10 +4,9 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 
 if __name__ == "__main__":
-    API_KEY = "e784f7b7-627a-4987-a536-b2dd5956f4e2"
     bidding_zone = "10YNL----------L"
 
-    extracted_data = extract_actual_load(API_KEY, bidding_zone, target_date="2025-07-07")
+    extracted_data = extract_actual_load(bidding_zone, target_date="2025-07-07")
     transformed = [transform_actual_load(date_data[1], date_data[0]) for date_data in extracted_data]
     flattened = [item for day_data in transformed for item in day_data]
 
