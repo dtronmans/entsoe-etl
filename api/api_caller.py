@@ -1,6 +1,7 @@
 import requests
 from dotenv import load_dotenv
 import os
+from functools import wraps
 
 import xml.etree.ElementTree as ET
 
@@ -20,11 +21,31 @@ class Caller:
             "target_date": "2025-07-07"
         }
 
+    @staticmethod
+    def entsoe_api_call(api_method):
+        @wraps(api_method)
+        def wrapper(self, *args, **kwargs):
+            print("Fetching from ENTSO-E API...")
+            try:
+                params = api_method(self, *args, **kwargs)
+                response = requests.get(self.url, params=params)
+                response.raise_for_status()
+                root = ET.fromstring(response.content)
+                print(f"✓ Retrieved data for {params.get('periodStart', 'unknown')}")
+                return root
+            except requests.HTTPError as e:
+                print(f"⚠️  HTTP error: {e}")
+            except Exception as e:
+                print(f"❌ Unexpected error: {e}")
+
+        return wrapper
+
+    @entsoe_api_call
     def get_actual_load(self, start, end, bidding_zone=None):
-        print("Fetching from ENTSO-E API...")
         if bidding_zone is None:
             bidding_zone = self.defaults["bidding_zone"]
-        params = {
+
+        return {
             'securityToken': self.api_key,
             'documentType': 'A65',
             'processType': 'A16',
@@ -32,15 +53,3 @@ class Caller:
             'periodStart': format_entsoe_datetime(start),
             'periodEnd': format_entsoe_datetime(end),
         }
-
-        try:
-            response = requests.get(self.url, params=params)
-            response.raise_for_status()
-            root = ET.fromstring(response.content)
-            print(f"✓ Retrieved data for {start}")
-            return root
-        except requests.HTTPError as e:
-            print(f"⚠️  Skipping {start}: {e}")
-        except Exception as e:
-            print(f"❌ Unexpected error on {start}: {e}")
-

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 from isodate import parse_duration
 
 
-def transform_actual_load(root, expected_date, tz_str='Europe/Paris'):
+def transform_actual_load_five_days_prior(root, expected_date, tz_str='Europe/Paris'):
     load_values = []
     local_tz = ZoneInfo(tz_str)
 
