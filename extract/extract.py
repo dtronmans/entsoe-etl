@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from api.api_caller import Caller
 
 
-def extract_actual_load_five_days_prior(bidding_zone='10YFR-RTE------C', target_date=None):
+def extract_actual_load_five_days_prior(bidding_zone='10YFR-RTE------C', target_date=None): # target_date is "2025-07-07"
     caller = Caller()
 
     print("Fetching from ENTSO-E API...")

@@ -16,7 +16,6 @@ if __name__ == "__main__":
 
     flattened.sort(key=lambda x: x['timestamp'])
 
-    print([flat[0] for flat in flattened])
 
     timestamps = [item['timestamp'] for item in flattened]
     load_values = [item['load_mw'] for item in flattened]
