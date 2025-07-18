@@ -1,0 +1,3 @@
+caller method: return ET.fromstring(response.content)
+extract: return list of tuple (date_str, ET.fromstring(response.content))
+transform: return list of tuple {'variable_name': value, 'timestamp': str}
