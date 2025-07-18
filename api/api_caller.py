@@ -21,6 +21,7 @@ class Caller:
         }
 
     def get_actual_load(self, start, end, bidding_zone=None):
+        print("Fetching from ENTSO-E API...")
         if bidding_zone is None:
             bidding_zone = self.defaults["bidding_zone"]
         params = {
