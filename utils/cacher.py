@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 
 class Cacher:
-    def __init__(self, cache_dir="cache", expiry_hours=24):
+    def __init__(self, cache_dir="cache", expiry_hours=72):
         self.cache_dir = Path(cache_dir)
         self.expiry = timedelta(hours=expiry_hours)
         self.cache_dir.mkdir(exist_ok=True)

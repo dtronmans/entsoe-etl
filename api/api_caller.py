@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 
 from utils.date_utils import format_entsoe_datetime  # make sure this exists
+from utils.enums import LoadType
 
 
 class Caller:
@@ -50,9 +51,9 @@ class Caller:
         if bidding_zone is None:
             bidding_zone = self.defaults["bidding_zone"]
 
-        if load_type == "forecast":
+        if load_type == LoadType.FORECAST:
             process_type = 'A01'
-        elif load_type == "actual":
+        elif load_type == LoadType.ACTUAL:
             process_type = 'A16'
         else:
             raise Exception("Not correct type of load")
