@@ -45,30 +45,22 @@ class Caller:
         return wrapper
 
     @entsoe_api_call
-    def get_actual_load(self, start, end, bidding_zone=None):
+    def get_load(self, load_type, start, end, bidding_zone=None):
         # equivalent to https://transparency.entsoe.eu/load-domain/r2/totalLoadR2/show?name=&defaultValue=false&viewType=TABLE&areaType=BZN&atch=false&dateTime.dateTime=03.07.2025+00:00|CET|DAY&biddingZone.values=CTY|10YNL----------L!BZN|10YNL----------L&dateTime.timezone=CET_CEST&dateTime.timezone_input=CET+(UTC+1)+/+CEST+(UTC+2)
         if bidding_zone is None:
             bidding_zone = self.defaults["bidding_zone"]
 
-        return {
-            'securityToken': self.api_key,
-            'documentType': 'A65',
-            'processType': 'A16',
-            'outBiddingZone_Domain': bidding_zone,
-            'periodStart': format_entsoe_datetime(start),
-            'periodEnd': format_entsoe_datetime(end),
-        }
-
-    @entsoe_api_call
-    def get_forecast_load(self, start, end, bidding_zone=None):
-        # equivalent to https://transparency.entsoe.eu/load-domain/r2/totalLoadR2/show?name=&defaultValue=false&viewType=TABLE&areaType=BZN&atch=false&dateTime.dateTime=03.07.2025+00:00|CET|DAY&biddingZone.values=CTY|10YNL----------L!BZN|10YNL----------L&dateTime.timezone=CET_CEST&dateTime.timezone_input=CET+(UTC+1)+/+CEST+(UTC+2)
-        if bidding_zone is None:
-            bidding_zone = self.defaults["bidding_zone"]
+        if load_type == "forecast":
+            process_type = 'A01'
+        elif load_type == "actual":
+            process_type = 'A16'
+        else:
+            raise Exception("Not correct type of load")
 
         return {
             'securityToken': self.api_key,
             'documentType': 'A65',
-            'processType': 'A01',
+            'processType': process_type,
             'outBiddingZone_Domain': bidding_zone,
             'periodStart': format_entsoe_datetime(start),
             'periodEnd': format_entsoe_datetime(end),
