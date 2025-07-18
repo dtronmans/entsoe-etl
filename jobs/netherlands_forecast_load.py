@@ -2,7 +2,7 @@ from datetime import datetime
 
 from extract.extract import extract_forecast_load_n_days_prior
 from transform.transform import transform_forecast_load_n_days_prior
-from visualize.visualize_time_series import visualize_actual_load
+from visualize.visualize_time_series import visualize_single_load_var
 
 
 def netherlands_forecast_load(n_days=5):
@@ -18,4 +18,4 @@ def netherlands_forecast_load(n_days=5):
 
     flattened.sort(key=lambda x: x['timestamp'])
 
-    visualize_actual_load(flattened)
+    return flattened
