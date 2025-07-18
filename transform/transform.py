@@ -1,8 +1,9 @@
 from zoneinfo import ZoneInfo  # Python 3.9+
 from datetime import datetime, timedelta, timezone
+from isodate import parse_duration
 
 
-def transform_actual_load(root, expected_date, tz_str='Europe/Paris'):
+def transform_load_vars(root, expected_date, tz_str='Europe/Paris'):
     load_values = []
     local_tz = ZoneInfo(tz_str)
 
@@ -20,7 +21,8 @@ def transform_actual_load(root, expected_date, tz_str='Europe/Paris'):
                 quantity = float(point.find('{*}quantity').text)
 
                 # Add time delta and convert to local time
-                utc_timestamp = base_time + timedelta(hours=position - 1)
+                duration = parse_duration(resolution)  # this makes it sensitive to 1 hour vs. 15 minutes
+                utc_timestamp = base_time + duration * (position - 1)
                 local_timestamp = utc_timestamp.astimezone(local_tz)
 
                 if local_timestamp.date() == expected_date:
