@@ -1,22 +1,21 @@
-import requests
-from dotenv import load_dotenv
-import os
-from functools import wraps
-
+from utils.cacher import Cacher
 import xml.etree.ElementTree as ET
+import requests
+from functools import wraps
+import os
+from dotenv import load_dotenv
 
-from utils.date_utils import format_entsoe_datetime
+from utils.date_utils import format_entsoe_datetime  # make sure this exists
 
 
 class Caller:
-
     def __init__(self):
         load_dotenv()
         self.url = "https://web-api.tp.entsoe.eu/api"
         self.api_key = os.getenv("API_KEY")
+        self.cacher = Cacher()
 
         self.defaults = {
-            # equivalent to https://transparency.entsoe.eu/load-domain/r2/totalLoadR2/show?name=&defaultValue=false&viewType=TABLE&areaType=BZN&atch=false&dateTime.dateTime=03.07.2025+00:00|CET|DAY&biddingZone.values=CTY|10YNL----------L!BZN|10YNL----------L&dateTime.timezone=CET_CEST&dateTime.timezone_input=CET+(UTC+1)+/+CEST+(UTC+2)
             "bidding_zone": "10YNL----------L",
             "target_date": "2025-07-07"
         }
@@ -25,13 +24,18 @@ class Caller:
     def entsoe_api_call(api_method):
         @wraps(api_method)
         def wrapper(self, *args, **kwargs):
+            params = api_method(self, *args, **kwargs)
+            if self.cacher.does_cache_exist(params):
+                print("✓ Loaded from cache")
+                return self.cacher.load_from_cache(params)
+
             print("Fetching from ENTSO-E API...")
             try:
-                params = api_method(self, *args, **kwargs)
                 response = requests.get(self.url, params=params)
                 response.raise_for_status()
                 root = ET.fromstring(response.content)
-                print(f"✓ Retrieved data for {params.get('periodStart', 'unknown')}")
+                self.cacher.save_to_cache(params, root)
+                print(f"✓ Retrieved and cached data for {params.get('periodStart', 'unknown')}")
                 return root
             except requests.HTTPError as e:
                 print(f"⚠️  HTTP error: {e}")
@@ -42,6 +46,7 @@ class Caller:
 
     @entsoe_api_call
     def get_actual_load(self, start, end, bidding_zone=None):
+        # equivalent to https://transparency.entsoe.eu/load-domain/r2/totalLoadR2/show?name=&defaultValue=false&viewType=TABLE&areaType=BZN&atch=false&dateTime.dateTime=03.07.2025+00:00|CET|DAY&biddingZone.values=CTY|10YNL----------L!BZN|10YNL----------L&dateTime.timezone=CET_CEST&dateTime.timezone_input=CET+(UTC+1)+/+CEST+(UTC+2)
         if bidding_zone is None:
             bidding_zone = self.defaults["bidding_zone"]
 
