@@ -39,9 +39,9 @@ class Caller:
                 print(f"✓ Retrieved and cached data for {params.get('periodStart', 'unknown')}")
                 return root
             except requests.HTTPError as e:
-                print(f"⚠️  HTTP error: {e}")
+                print(f"HTTP error: {e}")
             except Exception as e:
-                print(f"❌ Unexpected error: {e}")
+                print(f"Unexpected error: {e}")
 
         return wrapper
 
