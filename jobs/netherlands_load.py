@@ -2,19 +2,23 @@ from datetime import datetime
 
 from extract.extract import extract_load_n_days_prior
 from transform.transform import transform_load_vars
+from utils.date_utils import get_utc_day_ranges_before
 
 
-def netherlands_load(type_load, n_days=5):
-    bidding_zone = "10YNL----------L"
-    target_date = "2025-07-07"
+class NetherlandsLoadJob:
+    def __init__(self, extractor, transformer, loader):
+        self.extractor = extractor
+        self.transformer = transformer
+        self.loader = loader
 
-    extracted_data = extract_load_n_days_prior(type_load, bidding_zone, target_date, n_days)
-    transformed = [transform_load_vars(date_data[1], date_data[0]) for date_data in extracted_data]
-    flattened = [item for day_data in transformed for item in day_data]
+    def run(self, *, target_date, n_days=1, **extract_kwargs):
+        all_transformed = []
 
-    for item in flattened:
-        item['timestamp'] = datetime.fromisoformat(item['timestamp'])
+        day_ranges = get_utc_day_ranges_before(target_date, days=n_days)
+        for date, start, end in day_ranges:
+            extract_kwargs.update({"start": start, "end": end, "expected_date": date})
+            root = self.extractor.extract(**extract_kwargs)
+            transformed = self.transformer.transform(root, expected_date=date)
+            all_transformed.extend(transformed)
 
-    flattened.sort(key=lambda x: x['timestamp'])
-
-    return flattened
+        self.loader.load(all_transformed)
