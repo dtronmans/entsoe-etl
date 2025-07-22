@@ -23,7 +23,7 @@ class BaseExtractor:
             response.raise_for_status()
             root = ET.fromstring(response.content)
             self.cacher.save_to_cache(params, root)
-            print(f"✓ Retrieved and cached data for {params.get('periodStart', 'unknown')}")
+            print(f"Retrieved and cached data for {params.get('periodStart', 'unknown')}")
             return root
         except requests.HTTPError as e:
             print(f"HTTP error: {e}")

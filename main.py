@@ -1,11 +1,11 @@
 from extractors.load_forecast import LoadForecastExtractor
-from jobs.netherlands_load import NetherlandsLoadJob
+from jobs.netherlands_actual_load import NetherlandsActualLoad
 from loaders.visualize_loader import VisualizeLoader
 from transformers.load_transformer import LoadTransformer
 from utils.enums import LoadType
 
 if __name__ == "__main__":
-    job = NetherlandsLoadJob(
+    job = NetherlandsActualLoad(
         extractor=LoadForecastExtractor(),
         transformer=LoadTransformer(),
         loader=VisualizeLoader()
