@@ -6,16 +6,9 @@ def align_lists(forecast_flattened, actual_flattened):
     """
     Aligns two time series lists of dictionaries by common timestamps.
     Removes any entries that don't have a matching timestamp in the other list.
-
-    Args:
-        forecast_flattened (list): List of dicts with 'timestamp' and 'load_mw' for forecast data.
-        actual_flattened (list): List of dicts with 'timestamp' and 'load_mw' for actual data.
-
-    Returns:
-        tuple: (aligned_forecast_flattened, aligned_actual_flattened)
     """
-    forecast_dict = {entry['timestamp']: entry for entry in forecast_flattened}
-    actual_dict = {entry['timestamp']: entry for entry in actual_flattened}
+    forecast_dict = {entry["timestamp"]: entry for entry in forecast_flattened}
+    actual_dict = {entry["timestamp"]: entry for entry in actual_flattened}
 
     common_timestamps = sorted(set(forecast_dict.keys()) & set(actual_dict.keys()))
 
@@ -25,7 +18,9 @@ def align_lists(forecast_flattened, actual_flattened):
     return aligned_forecast, aligned_actual
 
 
-def get_utc_day_ranges_before(target_date: str = None, days: int = 5, tz: str = "Europe/Paris"):
+def get_utc_day_ranges_before(
+    target_date: str = None, days: int = 5, tz: str = "Europe/Paris"
+):
     if target_date is None:
         start_date = datetime.utcnow().date() - timedelta(days=2)
     else:
@@ -48,4 +43,4 @@ def get_utc_day_ranges_before(target_date: str = None, days: int = 5, tz: str = 
 
 
 def format_entsoe_datetime(dt):
-    return dt.strftime('%Y%m%d%H%M')
+    return dt.strftime("%Y%m%d%H%M")

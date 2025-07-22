@@ -1,8 +1,7 @@
-import os
-import pickle
 import hashlib
-from pathlib import Path
+import pickle
 from datetime import datetime, timedelta
+from pathlib import Path
 
 
 class Cacher:
@@ -23,7 +22,9 @@ class Cacher:
         path = self._get_cache_path(params)
         if not path.exists():
             return False
-        return datetime.now() - datetime.fromtimestamp(path.stat().st_mtime) < self.expiry
+        return (
+            datetime.now() - datetime.fromtimestamp(path.stat().st_mtime) < self.expiry
+        )
 
     def load_from_cache(self, params: dict):
         path = self._get_cache_path(params)

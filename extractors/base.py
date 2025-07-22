@@ -1,7 +1,9 @@
 import os
-import requests
 import xml.etree.ElementTree as ET
+
+import requests
 from dotenv import load_dotenv
+
 from utils.cacher import Cacher
 
 
@@ -14,7 +16,7 @@ class BaseExtractor:
 
     def call_entsoe(self, params):
         if self.cacher.does_cache_exist(params):
-            print("✓ Loaded from cache")
+            print("Loaded from cache")
             return self.cacher.load_from_cache(params)
 
         print("Fetching from ENTSO-E API...")
@@ -23,7 +25,9 @@ class BaseExtractor:
             response.raise_for_status()
             root = ET.fromstring(response.content)
             self.cacher.save_to_cache(params, root)
-            print(f"Retrieved and cached data for {params.get('periodStart', 'unknown')}")
+            print(
+                f"Retrieved and cached data for {params.get('periodStart', 'unknown')}"
+            )
             return root
         except requests.HTTPError as e:
             print(f"HTTP error: {e}")

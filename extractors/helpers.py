@@ -3,10 +3,7 @@ from utils.date_utils import get_utc_day_ranges_before
 
 
 def extract_multiple_days(
-        load_type,
-        bidding_zone='10YFR-RTE------C',
-        target_date=None,
-        n_days=5
+    load_type, bidding_zone="10YFR-RTE------C", target_date=None, n_days=5
 ):
     extractor = LoadForecastExtractor()
     data_per_day = []

@@ -8,12 +8,12 @@ if __name__ == "__main__":
     job = NetherlandsActualLoad(
         extractor=LoadForecastExtractor(),
         transformer=LoadTransformer(),
-        loader=VisualizeLoader()
+        loader=VisualizeLoader(),
     )
 
     job.run(
         bidding_zone="10YNL----------L",
         load_type=LoadType.FORECAST,
         target_date="2025-07-07",
-        n_days=1
+        n_days=1,
     )
