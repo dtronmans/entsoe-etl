@@ -4,7 +4,7 @@ from utils.enums import LoadType
 
 
 class NetherlandsActualLoad(ETLJob):
-    def run(self, target_date, n_days=1):
+    def run(self, bidding_zone, load_type, target_date, n_days=1):
         all_transformed = []
 
         day_ranges = get_utc_day_ranges_before(target_date, days=n_days)
@@ -12,8 +12,8 @@ class NetherlandsActualLoad(ETLJob):
             root = self.extractor.extract(
                 start=start,
                 end=end,
-                bidding_zone="10YNL----------L",
-                load_type=LoadType.ACTUAL
+                bidding_zone=bidding_zone,
+                load_type=load_type
             )
             transformed = self.transformer.transform(root, expected_date=date)
             all_transformed.extend(transformed)
