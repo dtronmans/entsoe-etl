@@ -1,0 +1,30 @@
+name: Python Format Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        pip install black isort
+
+    - name: Check code formatting with Black
+      run: black --check .
+
+    - name: Check import sorting with isort
+      run: isort --check-only .
